@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Kotlin File Picker</string>
     <string name="exception_msg">Kotlin file picker is not initialized with proper arguments</string>
+    <string name="exception_msg_illegal_">File selection not supported</string>
 </resources>

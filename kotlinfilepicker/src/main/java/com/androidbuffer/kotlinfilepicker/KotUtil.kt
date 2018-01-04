@@ -3,8 +3,10 @@ package com.androidbuffer.kotlinfilepicker
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.support.annotation.RequiresApi
 import android.support.v4.content.FileProvider
 import java.io.File
 import java.text.SimpleDateFormat
@@ -40,6 +42,23 @@ public class KotUtil {
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             }
             return cameraIntent
+        }
+
+        /**
+         * multiple select works for only API level 18 and above
+         */
+        @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+        fun getGalleryIntent(mimeType: String, isMultiple: Boolean): Intent {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.setType(mimeType)
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
+            return intent
+        }
+
+        fun getGalleryIntent(mimeType: String): Intent {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.setType(mimeType)
+            return intent
         }
 
         private fun createImageFile(context: Context): File {

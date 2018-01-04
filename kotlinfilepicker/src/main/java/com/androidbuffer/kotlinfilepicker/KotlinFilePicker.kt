@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -47,19 +46,24 @@ public class KotlinFilePicker : AppCompatActivity() {
         //handle the intent passed from the client
         val selection = intent.getStringExtra(KotConstants.EXTRA_FILE_SELECTION)
         val isMultipleEnabled = intent.getBooleanExtra(KotConstants.EXTRA_MULTIPLE_ENABLED, false)
-        intentPick = getSelectedIntent(selection)
-        if (intentPick != null) {
-            startActivityForResult(intentPick, REQUEST_MEDIA_CAPTURE)
-        } else {
-            throwException(getString(R.string.exception_msg_illegal_))
-        }
-    }
-
-    private fun getSelectedIntent(selection: String): Intent? {
-        //returns a intent according to selection of file
-        return when (selection) {
-            KotConstants.SELECTION_TYPE_CAMERA -> KotUtil.getCameraIntent(this)
-            else -> null
+        when (selection) {
+            KotConstants.SELECTION_TYPE_CAMERA -> {
+                val cameraIntent = KotUtil.getCameraIntent(this)
+                intentPick = cameraIntent;
+                startActivityForResult(cameraIntent, REQUEST_MEDIA_CAPTURE)
+            }
+            KotConstants.SELECTION_TYPE_GALLERY -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    startActivityForResult(KotUtil.getGalleryIntent(KotConstants.FILE_TYPE_IMAGE_ALL
+                            , isMultipleEnabled), REQUEST_MEDIA_GALLERY)
+                } else {
+                    startActivityForResult(KotUtil.getGalleryIntent(KotConstants.FILE_TYPE_IMAGE_ALL)
+                            , REQUEST_MEDIA_GALLERY)
+                }
+            }
+            else -> {
+                throwException(getString(R.string.exception_msg_illegal_))
+            }
         }
     }
 
@@ -95,6 +99,8 @@ public class KotlinFilePicker : AppCompatActivity() {
             //do something
         } else if (REQUEST_MEDIA_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
             //do something
+            val fileUri = data?.data
+            deliverResultSuccess(fileUri)
         } else {
             deliverResultFailed()
         }

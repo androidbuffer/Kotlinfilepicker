@@ -60,7 +60,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun openGallery() {
         //opens a gallery intent
-        Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show()
+        var galleryIntent = Intent(this,KotlinFilePicker::class.java)
+        galleryIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_GALLERY)
+        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED,true)
+        startActivityForResult(galleryIntent, REQUEST_GALLERY)
     }
 
     private fun openFile() {
@@ -74,9 +77,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val uri: Uri? = data?.getParcelableExtra(KotConstants.EXTRA_FILE_RESULTS)
             ivPicture.setImageURI(uri)
         } else if (REQUEST_FILE == requestCode && resultCode == Activity.RESULT_OK) {
-
+            val uri: Uri? = data?.getParcelableExtra(KotConstants.EXTRA_FILE_RESULTS)
+            ivPicture.setImageURI(uri)
         } else if (REQUEST_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
-
+            val uri: Uri? = data?.getParcelableExtra(KotConstants.EXTRA_FILE_RESULTS)
+            ivPicture.setImageURI(uri)
         }
     }
 }

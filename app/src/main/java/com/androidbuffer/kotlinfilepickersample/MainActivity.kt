@@ -68,7 +68,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun openFile() {
         //opens a file intent
-        Toast.makeText(this, "File", Toast.LENGTH_SHORT).show()
+        var galleryIntent = Intent(this,KotlinFilePicker::class.java)
+        galleryIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_FILE)
+        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED,true)
+        startActivityForResult(galleryIntent, REQUEST_FILE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -61,6 +61,17 @@ public class KotlinFilePicker : AppCompatActivity() {
                             , REQUEST_MEDIA_GALLERY)
                 }
             }
+            KotConstants.SELECTION_TYPE_FILE -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    val fileIntent = KotUtil.getFileIntent(KotConstants.FILE_TYPE_FILE_ALL)
+                    intentPick = fileIntent
+                    startActivityForResult(fileIntent, REQUEST_MEDIA_FILE)
+                } else {
+                    val fileIntent = KotUtil.getFileIntent(KotConstants.FILE_TYPE_FILE_ALL)
+                    intentPick = fileIntent
+                    startActivityForResult(fileIntent, REQUEST_MEDIA_FILE)
+                }
+            }
             else -> {
                 throwException(getString(R.string.exception_msg_illegal_))
             }
@@ -97,6 +108,8 @@ public class KotlinFilePicker : AppCompatActivity() {
             deliverResultSuccess(fileUri)
         } else if (REQUEST_MEDIA_FILE == requestCode && resultCode == Activity.RESULT_OK) {
             //do something
+            val videoUri = intentPick?.clipData?.getItemAt(0)?.uri
+            deliverResultSuccess(videoUri)
         } else if (REQUEST_MEDIA_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
             //do something
             val fileUri = data?.data

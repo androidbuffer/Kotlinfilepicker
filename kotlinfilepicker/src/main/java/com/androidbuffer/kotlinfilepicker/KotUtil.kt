@@ -22,6 +22,11 @@ public class KotUtil {
 
         private val authority = BuildConfig.APPLICATION_ID + ".fileprovider"
 
+        /**
+         * @return {@link Intent}
+         * @param context
+         * returns a intent for camera
+         */
         fun getCameraIntent(context: Context): Intent {
             //returns a camera intent with temp file location
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -30,21 +35,31 @@ public class KotUtil {
                 val uri = getUriFromFile(context, file)
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             }
-            return cameraIntent
-        }
-
-        fun getVideoIntent(context: Context): Intent {
-            //returns a video recording intent with temp file location
-            val cameraIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-            val file = createVideoFile(context)
-            if (file != null) {
-                val uri = getUriFromFile(context, file)
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            }
+            cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             return cameraIntent
         }
 
         /**
+         * @return {@link Intent}
+         * @param context
+         * returns a intent for video
+         */
+        fun getVideoIntent(context: Context): Intent {
+            //returns a video recording intent with temp file location
+            val videoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            val file = createVideoFile(context)
+            if (file != null) {
+                val uri = getUriFromFile(context, file)
+                videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            }
+            videoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            return videoIntent
+        }
+
+        /**
+         * @return {@link Intent}
+         * @param isMultiple
+         * @param mimeType
          * multiple select works for only API level 18 and above
          */
         @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -52,12 +67,32 @@ public class KotUtil {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.setType(mimeType)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             return intent
         }
 
+        /**
+         * @return {@link Intent}
+         * @param mimeType
+         * returns a intent for gallery
+         */
         fun getGalleryIntent(mimeType: String): Intent {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.setType(mimeType)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            return intent
+        }
+
+        /**
+         * @return {@link Intent}
+         * @param mimeType
+         * returns a intent for file
+         */
+        fun getFileIntent(mimeType: String): Intent {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.setType(mimeType)
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             return intent
         }
 
@@ -71,7 +106,7 @@ public class KotUtil {
         private fun createVideoFile(context: Context): File {
             //this returns a temp file object
             val fileName = "video" + createFileName()
-            val file = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
             return File.createTempFile(fileName, ".mp4", file)
         }
 

@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.androidbuffer.kotlinfilepicker.KotConstants
 import com.androidbuffer.kotlinfilepicker.KotlinFilePicker
 
@@ -53,38 +52,38 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun openCamera() {
         //opens a camera intent
-        var cameraIntent = Intent(this,KotlinFilePicker::class.java)
+        var cameraIntent = Intent(this, KotlinFilePicker::class.java)
         cameraIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_CAMERA)
         startActivityForResult(cameraIntent, REQUEST_CAMERA)
     }
 
     private fun openGallery() {
         //opens a gallery intent
-        var galleryIntent = Intent(this,KotlinFilePicker::class.java)
+        var galleryIntent = Intent(this, KotlinFilePicker::class.java)
         galleryIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_GALLERY)
-        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED,true)
+        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED, true)
         startActivityForResult(galleryIntent, REQUEST_GALLERY)
     }
 
     private fun openFile() {
         //opens a file intent
-        var galleryIntent = Intent(this,KotlinFilePicker::class.java)
+        var galleryIntent = Intent(this, KotlinFilePicker::class.java)
         galleryIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_FILE)
-        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED,true)
+        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED, true)
         startActivityForResult(galleryIntent, REQUEST_FILE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (REQUEST_CAMERA == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = data?.getParcelableExtra(KotConstants.EXTRA_FILE_RESULTS)
-            ivPicture.setImageURI(uri)
+            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
+            ivPicture.setImageURI(uri?.get(0))
         } else if (REQUEST_FILE == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = data?.getParcelableExtra(KotConstants.EXTRA_FILE_RESULTS)
-            ivPicture.setImageURI(uri)
+            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
+            ivPicture.setImageURI(uri?.get(0))
         } else if (REQUEST_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = data?.getParcelableExtra(KotConstants.EXTRA_FILE_RESULTS)
-            ivPicture.setImageURI(uri)
+            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
+            ivPicture.setImageURI(uri?.get(0))
         }
     }
 }

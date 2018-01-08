@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 
+
 /**
  * Created by AndroidBuffer on 28/12/17.
  */
@@ -28,18 +29,25 @@ public class KotlinFilePicker : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handlePermissionCheck()
-        handleIntent(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (handlePermissionCheck()) {
+                handleIntent(intent)
+            } else {
+                val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_STORAGE)
+            }
+        } else {
+            handleIntent(intent)
+        }
     }
 
-    private fun handlePermissionCheck() {
+    private fun handlePermissionCheck(): Boolean {
         //check for the permission before accessing storage
         val permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (permissionGranted == PackageManager.PERMISSION_GRANTED) {
-            return
+            return true
         }
-        val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_STORAGE)
+        return false
     }
 
     private fun handleIntent(intent: Intent) {
@@ -89,8 +97,10 @@ public class KotlinFilePicker : AppCompatActivity() {
             for (permission in grantResults) {
                 if (permission == PackageManager.PERMISSION_DENIED) {
                     throwException("Permission not granted for storage read and write ${permissions}")
+                    return;
                 }
             }
+            handleIntent(intent)
         }
     }
 
@@ -104,25 +114,25 @@ public class KotlinFilePicker : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (REQUEST_MEDIA_CAPTURE == requestCode && resultCode == Activity.RESULT_OK) {
             //received the camera intent data
-            val fileUri = intentPick?.clipData?.getItemAt(0)?.uri
-            deliverResultSuccess(fileUri)
+            val cameraUri = getUriList(intentPick)
+            deliverResultSuccess(cameraUri)
         } else if (REQUEST_MEDIA_FILE == requestCode && resultCode == Activity.RESULT_OK) {
             //do something
-            val videoUri = intentPick?.clipData?.getItemAt(0)?.uri
-            deliverResultSuccess(videoUri)
+            val fileUri = getUriList(data)
+            deliverResultSuccess(fileUri)
         } else if (REQUEST_MEDIA_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
             //do something
-            val fileUri = data?.data
-            deliverResultSuccess(fileUri)
+            val galleryUri = getUriList(data)
+            deliverResultSuccess(galleryUri)
         } else {
             deliverResultFailed()
         }
     }
 
-    private fun deliverResultSuccess(uri: Uri?) {
+    private fun deliverResultSuccess(uri: ArrayList<Uri?>) {
         //returns the result back to calling activity
         val intent = Intent()
-        intent.putExtra(KotConstants.EXTRA_FILE_RESULTS, uri)
+        intent.putParcelableArrayListExtra(KotConstants.EXTRA_FILE_RESULTS, uri)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
@@ -136,6 +146,22 @@ public class KotlinFilePicker : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         deliverResultFailed()
+    }
+
+    private fun getUriList(intent: Intent?): ArrayList<Uri?> {
+        //this returns a list of uri for passing back to parent intent
+        val listUri = ArrayList<Uri?>();
+        if (intent?.data == null) {
+            //that means we may have data in clipdata
+            val item = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                listUri.add(intent?.clipData?.getItemAt(0)?.uri)
+            } else {
+                intent?.data
+            }
+        } else {
+            listUri.add(intent.data)
+        }
+        return listUri
     }
 
 }

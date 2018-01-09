@@ -1,7 +1,9 @@
 package com.androidbuffer.kotlinfilepicker
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -33,9 +35,10 @@ public class KotUtil {
             val file = createImageFile(context)
             if (file != null) {
                 val uri = getUriFromFile(context, file)
+                grantUriPermission(context, cameraIntent, uri)
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             }
-            cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            cameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             return cameraIntent
         }
 
@@ -96,18 +99,18 @@ public class KotUtil {
             return intent
         }
 
-        private fun createImageFile(context: Context): File {
+        private fun createImageFile(context: Context): File? {
             //this returns a temp file object
             val fileName = "image_" + createFileName()
             val file = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            return File.createTempFile(fileName, ".jpg", file)
+            return if (file == null) return null else File.createTempFile(fileName, ".jpg", file)
         }
 
-        private fun createVideoFile(context: Context): File {
+        private fun createVideoFile(context: Context): File? {
             //this returns a temp file object
             val fileName = "video" + createFileName()
             val file = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-            return File.createTempFile(fileName, ".mp4", file)
+            return if (file == null) return null else File.createTempFile(fileName, ".mp4", file)
         }
 
         private fun createFileName(): String {
@@ -119,6 +122,24 @@ public class KotUtil {
             //returns uri from file object
             return FileProvider.getUriForFile(context, authority, file)
         }
+
+        private fun grantUriPermission(context: Context, intent: Intent, uri: Uri) {
+            //grant the uri permission to all the packages
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                val clip = ClipData.newUri(context.contentResolver, "camera", uri)
+                intent.setClipData(clip)
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            } else {
+                val resInfoList = context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+                for (resolveInfo in resInfoList) {
+                    val packageName = resolveInfo.activityInfo.packageName
+                    context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                }
+            }
+        }
+
     }
 
 }

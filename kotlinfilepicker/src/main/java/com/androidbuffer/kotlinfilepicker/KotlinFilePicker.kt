@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -24,6 +23,7 @@ public class KotlinFilePicker : AppCompatActivity() {
     private val REQUEST_MEDIA_CAPTURE = 101
     private val REQUEST_MEDIA_FILE = 102
     private val REQUEST_MEDIA_GALLERY = 103
+    private val REQUEST_MEDIA_VIDEO = 104
     private val PERMISSION_REQUEST_STORAGE = 100
     private var intentPick: Intent? = null
 
@@ -43,7 +43,8 @@ public class KotlinFilePicker : AppCompatActivity() {
 
     private fun handlePermissionCheck(): Boolean {
         //check for the permission before accessing storage
-        val permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val permissionGranted = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (permissionGranted == PackageManager.PERMISSION_GRANTED) {
             return true
         }
@@ -56,29 +57,33 @@ public class KotlinFilePicker : AppCompatActivity() {
         val isMultipleEnabled = intent.getBooleanExtra(KotConstants.EXTRA_MULTIPLE_ENABLED, false)
         when (selection) {
             KotConstants.SELECTION_TYPE_CAMERA -> {
+                //camera intent
                 val cameraIntent = KotUtil.getCameraIntent(this)
-                intentPick = cameraIntent;
+                if (cameraIntent == null) {
+                    throwException(getString(R.string.exception_msg_no_activity))
+                    return
+                }
+                intentPick = cameraIntent
                 startActivityForResult(cameraIntent, REQUEST_MEDIA_CAPTURE)
             }
             KotConstants.SELECTION_TYPE_GALLERY -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    startActivityForResult(KotUtil.getGalleryIntent(KotConstants.FILE_TYPE_IMAGE_ALL
-                            , isMultipleEnabled), REQUEST_MEDIA_GALLERY)
-                } else {
-                    startActivityForResult(KotUtil.getGalleryIntent(KotConstants.FILE_TYPE_IMAGE_ALL)
-                            , REQUEST_MEDIA_GALLERY)
-                }
+                //gallery intent
+                val galleryIntent = KotUtil.getGalleryIntent(KotConstants.FILE_TYPE_IMAGE_ALL, isMultipleEnabled)
+                startActivityForResult(galleryIntent, REQUEST_MEDIA_GALLERY)
             }
             KotConstants.SELECTION_TYPE_FILE -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    val fileIntent = KotUtil.getFileIntent(KotConstants.FILE_TYPE_FILE_ALL)
-                    intentPick = fileIntent
-                    startActivityForResult(fileIntent, REQUEST_MEDIA_FILE)
-                } else {
-                    val fileIntent = KotUtil.getFileIntent(KotConstants.FILE_TYPE_FILE_ALL)
-                    intentPick = fileIntent
-                    startActivityForResult(fileIntent, REQUEST_MEDIA_FILE)
+                //file intent
+                val fileIntent = KotUtil.getFileIntent(KotConstants.FILE_TYPE_FILE_ALL, isMultipleEnabled)
+                startActivityForResult(fileIntent, REQUEST_MEDIA_FILE)
+            }
+            KotConstants.SELECTION_TYPE_VIDEO -> {
+                val videoIntent = KotUtil.getVideoIntent(this)
+                if (videoIntent == null) {
+                    throwException(getString(R.string.exception_msg_no_activity))
+                    return
                 }
+                intentPick = videoIntent
+                startActivityForResult(videoIntent, REQUEST_MEDIA_VIDEO)
             }
             else -> {
                 throwException(getString(R.string.exception_msg_illegal_))
@@ -97,7 +102,7 @@ public class KotlinFilePicker : AppCompatActivity() {
             for (permission in grantResults) {
                 if (permission == PackageManager.PERMISSION_DENIED) {
                     throwException("Permission not granted for storage read and write ${permissions}")
-                    return;
+                    return
                 }
             }
             handleIntent(intent)
@@ -109,7 +114,6 @@ public class KotlinFilePicker : AppCompatActivity() {
         throw IllegalArgumentException(msg)
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (REQUEST_MEDIA_CAPTURE == requestCode && resultCode == Activity.RESULT_OK) {
@@ -150,7 +154,7 @@ public class KotlinFilePicker : AppCompatActivity() {
 
     private fun getUriList(intent: Intent?): ArrayList<Uri?> {
         //this returns a list of uri for passing back to parent intent
-        val listUri = ArrayList<Uri?>();
+        val listUri = ArrayList<Uri?>()
         if (intent?.data == null) {
             //that means we may have data in clipdata
             val item = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

@@ -17,6 +17,7 @@ public class KotConstants {
         public const val SELECTION_TYPE_CAMERA = "Gallery"
         public const val SELECTION_TYPE_GALLERY = "Camera"
         public const val SELECTION_TYPE_FILE = "File"
+        public const val SELECTION_TYPE_VIDEO = "Video"
 
         //files types supported
         val FILE_TYPE_IMAGE_ALL = "image/*"

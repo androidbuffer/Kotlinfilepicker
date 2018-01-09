@@ -78,12 +78,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (REQUEST_CAMERA == requestCode && resultCode == Activity.RESULT_OK) {
             val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
             ivPicture.setImageURI(uri?.get(0))
+            tvDetails.setText(uri.toString())
         } else if (REQUEST_FILE == requestCode && resultCode == Activity.RESULT_OK) {
             val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
             ivPicture.setImageURI(uri?.get(0))
+            tvDetails.setText(uri.toString())
         } else if (REQUEST_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
             val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
             ivPicture.setImageURI(uri?.get(0))
+            tvDetails.setText(uri.toString())
         }
     }
 }

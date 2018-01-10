@@ -128,6 +128,10 @@ public class KotlinFilePicker : AppCompatActivity() {
             //do something
             val galleryUri = getUriList(data)
             deliverResultSuccess(galleryUri)
+        } else if (REQUEST_MEDIA_VIDEO == requestCode && resultCode == Activity.RESULT_OK) {
+            //do something
+            val videoUri = getUriList(intentPick)
+            deliverResultSuccess(videoUri)
         } else {
             deliverResultFailed()
         }

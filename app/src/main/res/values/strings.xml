@@ -4,4 +4,5 @@
     <string name="button_camera">Camera</string>
     <string name="button_file">File</string>
     <string name="button_gallery">Gallery</string>
+    <string name="button_video">Video</string>
 </resources>

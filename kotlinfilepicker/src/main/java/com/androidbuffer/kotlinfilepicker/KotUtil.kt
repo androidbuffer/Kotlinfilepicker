@@ -77,6 +77,7 @@ public class KotUtil {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
             }
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
             return intent
         }
 
@@ -92,6 +93,7 @@ public class KotUtil {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
             }
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
             return intent
         }
 

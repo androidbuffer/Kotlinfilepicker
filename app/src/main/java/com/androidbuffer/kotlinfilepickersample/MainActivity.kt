@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.*
 import com.androidbuffer.kotlinfilepicker.KotConstants
+import com.androidbuffer.kotlinfilepicker.KotRequest
 import com.androidbuffer.kotlinfilepicker.KotlinFilePicker
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -54,6 +55,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 getString(R.string.button_video) -> openVideo()
             }
         }
+    }
+
+    private fun openCameraFromClass() {
+        //opens camera from camera class
+        KotRequest.Camera(this).setRequestCode(REQUEST_CAMERA).pick()
     }
 
     private fun openCamera() {

@@ -16,7 +16,7 @@ import java.util.*
 /**
  * Created by AndroidBuffer on 3/1/18.
  */
-public class KotUtil {
+class KotUtil {
 
     companion object {
 
@@ -87,10 +87,15 @@ public class KotUtil {
          * returns a intent for file
          */
         fun getFileIntent(mimeType: String, isMultiple: Boolean): Intent {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent = Intent()
             intent.setType(mimeType)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent.action = Intent.ACTION_OPEN_DOCUMENT
+            } else {
+                intent.action = Intent.ACTION_GET_CONTENT
             }
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.addCategory(Intent.CATEGORY_OPENABLE)

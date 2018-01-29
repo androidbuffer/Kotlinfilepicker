@@ -5,4 +5,15 @@
     <string name="button_file">File</string>
     <string name="button_gallery">Gallery</string>
     <string name="button_video">Video</string>
+    <string name="gallery_single">Gallery (Single)</string>
+
+    //recyclerview options
+    <string-array name="arrayOptions">
+        <item>Gallery(Single)</item>
+        <item>Gallery (Multiple)</item>
+        <item>File (Single)</item>
+        <item>File (Multiple)</item>
+        <item>Camera</item>
+        <item>Video </item>
+    </string-array>
 </resources>

@@ -161,8 +161,11 @@ public class KotlinFilePicker : AppCompatActivity() {
         val listUri = ArrayList<Uri?>()
         if (intent?.data == null) {
             //that means we may have data in clipdata
-            val item = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                listUri.add(intent?.clipData?.getItemAt(0)?.uri)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                val clipData = intent?.clipData
+                (0 until clipData?.itemCount!!)
+                        .map { clipData.getItemAt(it) }
+                        .mapTo(listUri) { it.uri }
             } else {
                 intent?.data
             }

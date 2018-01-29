@@ -11,7 +11,7 @@ public class KotRequest {
     /**
      * inner class for building the camera request
      */
-    public class Camera(val context: Activity) {
+    public class Camera(private val context: Activity) {
 
         var requestCode = 101
         var intent: Intent

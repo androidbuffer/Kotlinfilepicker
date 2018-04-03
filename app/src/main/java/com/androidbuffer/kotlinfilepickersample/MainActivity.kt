@@ -44,39 +44,24 @@ class MainActivity : AppCompatActivity(), Adapter.OnClickItemListener {
         rvFilePickerMain.adapter = adapter
     }
 
-    private fun openCameraFromClass() {
-        //opens camera from camera class
-        KotRequest.Camera(this).setRequestCode(REQUEST_CAMERA).pick()
-    }
-
     private fun openCamera() {
-        //opens a camera intent
-        var cameraIntent = Intent(this, KotlinFilePicker::class.java)
-        cameraIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_CAMERA)
-        startActivityForResult(cameraIntent, REQUEST_CAMERA)
+        //opens camera from camera class
+        KotRequest.Camera(this, REQUEST_CAMERA).pick()
     }
 
     private fun openVideo() {
         //opens a camera intent
-        var videoIntent = Intent(this, KotlinFilePicker::class.java)
-        videoIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_VIDEO)
-        startActivityForResult(videoIntent, REQUEST_VIDEO)
+        KotRequest.Video(this, REQUEST_VIDEO).getVideoIntent()
     }
 
-    private fun openGallery() {
+    private fun openGallery(isMultiple: Boolean) {
         //opens a gallery intent
-        var galleryIntent = Intent(this, KotlinFilePicker::class.java)
-        galleryIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_GALLERY)
-        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED, true)
-        startActivityForResult(galleryIntent, REQUEST_GALLERY)
+        KotRequest.Gallery(this, REQUEST_GALLERY).isMultiple(isMultiple).pick()
     }
 
     private fun openFile() {
         //opens a file intent
-        var galleryIntent = Intent(this, KotlinFilePicker::class.java)
-        galleryIntent.putExtra(KotConstants.EXTRA_FILE_SELECTION, KotConstants.SELECTION_TYPE_FILE)
-        galleryIntent.putExtra(KotConstants.EXTRA_MULTIPLE_ENABLED, true)
-        startActivityForResult(galleryIntent, REQUEST_FILE)
+       KotRequest.File(this,REQUEST_FILE).isMultiple(true).pick()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -104,8 +89,8 @@ class MainActivity : AppCompatActivity(), Adapter.OnClickItemListener {
     override fun onItemClick(position: Int) {
         //listener for items in adapter
         when (position) {
-            0 -> openGallery()
-            1 -> openGallery()
+            0 -> openGallery(false)
+            1 -> openGallery(true)
             2 -> openFile()
             3 -> openFile()
             4 -> openCamera()

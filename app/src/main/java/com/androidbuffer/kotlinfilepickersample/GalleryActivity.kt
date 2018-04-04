@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -32,6 +30,18 @@ class GalleryActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.vpImages)
         listOfImages = intent.getParcelableArrayListExtra<Uri>(EXTRA_IMAGE_URI)
         viewPager.adapter = adapter
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu);
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId==R.id.menuClose){
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     inner class AdapterImage(appContext: Context) : PagerAdapter() {

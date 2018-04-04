@@ -10,9 +10,9 @@ import android.widget.TextView
 /**
  * Created by AndroidBuffer on 26/1/18.
  */
-class Adapter(titleArray: Array<String>,
-              drawableArray: Array<Int>,
-              clickItemListener: OnClickItemListener) : RecyclerView.Adapter<Adapter.ViewHolder>() {
+class PickerAdapter(titleArray: Array<String>,
+                    drawableArray: Array<Int>,
+                    clickItemListener: OnClickItemListener) : RecyclerView.Adapter<PickerAdapter.ViewHolder>() {
 
     val arrayList: Array<String> = titleArray
     val drawableList: Array<Int> = drawableArray

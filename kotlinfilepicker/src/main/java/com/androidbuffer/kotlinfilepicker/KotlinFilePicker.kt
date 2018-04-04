@@ -110,7 +110,7 @@ public class KotlinFilePicker : AppCompatActivity() {
     }
 
     private fun throwException(msg: String) {
-        //throws a exception in case of
+        //throws a exception in case of exception
         throw IllegalArgumentException(msg)
     }
 
@@ -167,7 +167,7 @@ public class KotlinFilePicker : AppCompatActivity() {
                         .map { clipData.getItemAt(it) }
                         .mapTo(listUri) { it.uri }
             } else {
-                intent?.data
+                listUri.add(intent?.data)
             }
         } else {
             listUri.add(intent.data)

@@ -2,10 +2,12 @@ package com.androidbuffer.kotlinfilepicker
 
 import android.content.ClipData
 import android.content.Context
+import android.content.CursorLoader
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import java.io.File
@@ -135,6 +137,34 @@ class KotUtil {
                 intent.setClipData(clip)
                 intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
+        }
+
+        fun getFileDetails(context: Context, uri: Uri): File? {
+            //get the details from uri
+            var fileToReturn: File? = null
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                val tables = arrayOf(MediaStore.Images.Media.DATA)
+                val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
+                val cursor = cursorLoader.loadInBackground()
+                val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                if (cursor.moveToNext()) {
+                    val result = cursor.getString(columnIndex)
+                    fileToReturn = File(result)
+                }
+                cursor.close()
+            } else {
+                val documentId = DocumentsContract.getDocumentId(uri)
+                val tables = arrayOf(MediaStore.Images.Media.DATA)
+                val selection = MediaStore.Images.Media._ID + "=?"
+                val cursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, tables, selection, arrayOf(documentId), null)
+                val columnIndex = cursor.getColumnIndex(tables[0])
+                if (cursor.moveToNext()) {
+                    val result = cursor.getString(columnIndex)
+                    fileToReturn = File(result)
+                }
+                cursor.close()
+            }
+            return fileToReturn
         }
 
     }

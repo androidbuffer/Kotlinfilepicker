@@ -2,6 +2,7 @@ package com.androidbuffer.kotlinfilepicker
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -140,9 +141,26 @@ public class KotlinFilePicker : AppCompatActivity() {
     private fun deliverResultSuccess(uri: ArrayList<Uri?>) {
         //returns the result back to calling activity
         val intent = Intent()
-        intent.putParcelableArrayListExtra(KotConstants.EXTRA_FILE_RESULTS, uri)
+        intent.putParcelableArrayListExtra(KotConstants.EXTRA_FILE_RESULTS,
+                getKotResultFromUri(this, uri))
         setResult(Activity.RESULT_OK, intent)
         finish()
+    }
+
+    private fun getKotResultFromUri(context: Context, uri: ArrayList<Uri?>): ArrayList<KotResult> {
+        //convert the uri to kotResult data class for file information
+        val result = ArrayList<KotResult>()
+        for (item in uri) {
+            val file = KotUtil.getFileDetails(context, item!!)
+            val fileSize = String.format("%1d KB", file!!.length() / 1024)
+            val fileName = file.name
+            val fileLocation = file.path
+            val fileMimeType = KotUtil.getMimeType(fileLocation)
+            val fileModified = KotUtil.getDateModified(file.lastModified())
+            val kotResult = KotResult(item, fileName, fileSize, fileLocation, fileMimeType, fileModified)
+            result.add(kotResult)
+        }
+        return result
     }
 
     private fun deliverResultFailed() {

@@ -7,12 +7,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
+import android.webkit.MimeTypeMap
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import android.text.TextUtils
+import java.util.regex.Pattern
 
 
 /**
@@ -142,29 +144,79 @@ class KotUtil {
         fun getFileDetails(context: Context, uri: Uri): File? {
             //get the details from uri
             var fileToReturn: File? = null
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                val tables = arrayOf(MediaStore.Images.Media.DATA)
-                val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
-                val cursor = cursorLoader.loadInBackground()
-                val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                if (cursor.moveToNext()) {
-                    val result = cursor.getString(columnIndex)
-                    fileToReturn = File(result)
-                }
-                cursor.close()
-            } else {
-                val documentId = DocumentsContract.getDocumentId(uri)
-                val tables = arrayOf(MediaStore.Images.Media.DATA)
-                val selection = MediaStore.Images.Media._ID + "=?"
-                val cursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, tables, selection, arrayOf(documentId), null)
-                val columnIndex = cursor.getColumnIndex(tables[0])
-                if (cursor.moveToNext()) {
-                    val result = cursor.getString(columnIndex)
-                    fileToReturn = File(result)
-                }
-                cursor.close()
+//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            val tables = arrayOf(MediaStore.Images.Media.DATA)
+            val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
+            val cursor = cursorLoader.loadInBackground()
+            val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+            if (cursor.moveToNext()) {
+                val result = cursor.getString(columnIndex)
+                fileToReturn = File(result)
             }
+            cursor.close()
+//            } else {
+//                val documentId = DocumentsContract.getDocumentId(uri)
+//                val tables = arrayOf(MediaStore.Images.Media.DATA)
+//                val selection = MediaStore.Images.Media._ID + "=?"
+//                val cursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, tables, selection, arrayOf(documentId), null)
+//                val columnIndex = cursor.getColumnIndex(tables[0])
+//                if (cursor.moveToNext()) {
+//                    val result = cursor.getString(columnIndex)
+//                    fileToReturn = File(result)
+//                }
+//                cursor.close()
+//            }
             return fileToReturn
+        }
+
+        /**
+         * get the extension from path of the file
+         * @param url
+         */
+        fun getMimeType(url: String): String {
+            val extension = getFileExtensionFromUrl(url)
+            if (!extension.isEmpty()) {
+                return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
+            } else {
+                return "*/*";
+            }
+        }
+
+        /**
+         * get the date in format dd/MM/yyyy from long date
+         */
+        fun getDateModified(date: Long): String {
+            val simpleDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            return simpleDate.format(date)
+        }
+
+        fun getFileExtensionFromUrl(url: String): String {
+            var url = url
+            if (!TextUtils.isEmpty(url)) {
+                val fragment = url.lastIndexOf('#')
+                if (fragment > 0) {
+                    url = url.substring(0, fragment)
+                }
+
+                val query = url.lastIndexOf('?')
+                if (query > 0) {
+                    url = url.substring(0, query)
+                }
+
+                val filenamePos = url.lastIndexOf('/')
+                val filename = if (0 <= filenamePos) url.substring(filenamePos + 1) else url
+
+                // if the filename contains special characters, we don't
+                // consider it valid for our matching purposes:
+                if (!filename.isEmpty() && Pattern.matches("[\\sa-zA-Z_0-9\\.\\-\\(\\)\\%]+", filename)) {
+                    val dotPos = filename.lastIndexOf('.')
+                    if (0 <= dotPos) {
+                        return filename.substring(dotPos + 1)
+                    }
+                }
+            }
+
+            return ""
         }
 
     }

@@ -1,9 +1,7 @@
 package com.androidbuffer.kotlinfilepickersample
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -11,12 +9,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.androidbuffer.kotlinfilepicker.KotConstants
 import com.androidbuffer.kotlinfilepicker.KotRequest
-import com.androidbuffer.kotlinfilepicker.KotUtil
-import java.io.File
+import com.androidbuffer.kotlinfilepicker.KotResult
 
 class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
 
-    val EXTRA_IMAGE_URI = "EXTRA_IMAGE_URI"
+    private val EXTRA_IMAGE_RESULT = "EXTRA_IMAGE_RESULT"
     lateinit var rvFilePickerMain: RecyclerView
     private val REQUEST_CAMERA = 101
     private val REQUEST_GALLERY = 102
@@ -70,29 +67,41 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (REQUEST_CAMERA == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
             val intent = Intent(this, GalleryActivity::class.java)
-            intent.putExtra(EXTRA_IMAGE_URI, uri)
+            intent.putExtra(EXTRA_IMAGE_RESULT, result)
             startActivity(intent)
+
         } else if (REQUEST_FILE == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
-            val fileDetails = KotUtil.getFileDetails(this, uri?.get(0)!!)
-            val messageBuilder = StringBuilder(" Name = ${fileDetails?.name}")
-                    .append("\n size = ${fileDetails?.length()!! / 1024}")
-            openDetailsDialog(messageBuilder.toString(), "File Details")
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
+            createDetailsFromResult(result!!.get(0))
+
         } else if (REQUEST_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
             val intent = Intent(this, GalleryActivity::class.java)
-            intent.putExtra(EXTRA_IMAGE_URI, uri)
+            intent.putExtra(EXTRA_IMAGE_RESULT, result)
             startActivity(intent)
+
         } else if (REQUEST_VIDEO == requestCode && resultCode == Activity.RESULT_OK) {
-            val uri = data?.getParcelableArrayListExtra<Uri?>(KotConstants.EXTRA_FILE_RESULTS)
-            val fileDetails = KotUtil.getFileDetails(this, uri?.get(0)!!)
-            val messageBuilder = StringBuilder(" Name = ${fileDetails?.name}")
-                    .append("\n size = ${fileDetails?.length()!! / 1024}")
-            openDetailsDialog(messageBuilder.toString(), "Video Details")
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
+            createDetailsFromResult(result!!.get(0))
         }
+    }
+
+    fun createDetailsFromResult(kotResult: KotResult) {
+        //this function creates the details from the result
+        val messageBuilder = StringBuilder(" Name = ${kotResult?.name}")
+                .append("\n size = ${kotResult?.size}")
+                .append("\n location = ${kotResult.location}")
+                .append("\n type = ${kotResult.type}")
+                .append("\n modied date = ${kotResult.modified}")
+        openDetailsDialog(messageBuilder.toString(), "File Details")
     }
 
     override fun onItemClick(position: Int) {

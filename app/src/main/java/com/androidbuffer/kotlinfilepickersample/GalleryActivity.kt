@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import com.androidbuffer.kotlinfilepicker.KotResult
 
 
 /**
@@ -18,9 +19,9 @@ import android.widget.RelativeLayout
  */
 class GalleryActivity : AppCompatActivity() {
 
-    val EXTRA_IMAGE_URI = "EXTRA_IMAGE_URI"
+    private val EXTRA_IMAGE_RESULT = "EXTRA_IMAGE_RESULT"
     lateinit var viewPager: ViewPager
-    lateinit var listOfImages: ArrayList<Uri>
+    lateinit var listOfImages: ArrayList<KotResult>
     lateinit var adapter: AdapterImage
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +29,7 @@ class GalleryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_gallery)
         adapter = AdapterImage(this)
         viewPager = findViewById(R.id.vpImages)
-        listOfImages = intent.getParcelableArrayListExtra<Uri>(EXTRA_IMAGE_URI)
+        listOfImages = intent.getParcelableArrayListExtra<KotResult>(EXTRA_IMAGE_RESULT)
         viewPager.adapter = adapter
     }
 
@@ -59,7 +60,7 @@ class GalleryActivity : AppCompatActivity() {
         override fun instantiateItem(container: ViewGroup?, position: Int): Any {
             val view = inflater.inflate(R.layout.item_row_gallery, container, false)
             val imageView = view.findViewById<ImageView>(R.id.ivFullScreen)
-            imageView.setImageURI(listOfImages[position])
+            imageView.setImageURI(listOfImages[position].uri)
             container?.addView(view)
             return view
         }

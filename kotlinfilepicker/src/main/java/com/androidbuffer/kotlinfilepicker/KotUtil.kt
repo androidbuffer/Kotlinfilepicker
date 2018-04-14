@@ -76,7 +76,7 @@ class KotUtil {
          */
         fun getGalleryIntent(mimeType: String, isMultiple: Boolean): Intent {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.setType(mimeType)
+            intent.type = mimeType
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
             }
@@ -92,15 +92,11 @@ class KotUtil {
          */
         fun getFileIntent(mimeType: String, isMultiple: Boolean): Intent {
             val intent = Intent()
-            intent.setType(mimeType)
+            intent.type = mimeType
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent.action = Intent.ACTION_OPEN_DOCUMENT
-            } else {
-                intent.action = Intent.ACTION_GET_CONTENT
-            }
+            intent.action = Intent.ACTION_GET_CONTENT
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             return intent
@@ -136,7 +132,7 @@ class KotUtil {
                 intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 val clip = ClipData.newUri(context.contentResolver, "camera", uri)
-                intent.setClipData(clip)
+                intent.clipData = clip
                 intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
         }
@@ -178,20 +174,26 @@ class KotUtil {
             if (!extension.isEmpty()) {
                 return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
             } else {
-                return "*/*";
+                return "*/*"
             }
         }
 
         /**
          * get the date in format dd/MM/yyyy from long date
+         * @param date
+         * @return string date
          */
         fun getDateModified(date: Long): String {
             val simpleDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             return simpleDate.format(date)
         }
 
-        fun getFileExtensionFromUrl(url: String): String {
-            var url = url
+        /**
+         * get a file extension from the file path
+         * @param url
+         */
+        fun getFileExtensionFromUrl(passedUrl: String): String {
+            var url = passedUrl
             if (!TextUtils.isEmpty(url)) {
                 val fragment = url.lastIndexOf('#')
                 if (fragment > 0) {
@@ -207,7 +209,7 @@ class KotUtil {
                 val filename = if (0 <= filenamePos) url.substring(filenamePos + 1) else url
 
                 // if the filename contains special characters, we don't
-                // consider it valid for our matching purposes:
+                // consider it valid for our matching purposes except space:
                 if (!filename.isEmpty() && Pattern.matches("[\\sa-zA-Z_0-9\\.\\-\\(\\)\\%]+", filename)) {
                     val dotPos = filename.lastIndexOf('.')
                     if (0 <= dotPos) {

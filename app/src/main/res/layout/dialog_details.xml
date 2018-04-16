@@ -13,8 +13,9 @@
         android:layout_gravity="center_horizontal"
         android:background="@color/colorPrimary"
         android:gravity="center_vertical|center_horizontal"
-        android:minHeight="150dp"
+        android:minHeight="120dp"
         android:text="@string/file_details"
+        android:padding="@dimen/padding_large"
         android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
         android:textColor="@color/white"
         android:textSize="22sp" />

@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.CursorLoader
 import android.content.Intent
+import android.database.CursorIndexOutOfBoundsException
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -145,11 +146,21 @@ class KotUtil {
             val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
             val cursor = cursorLoader.loadInBackground()
             val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-            if (cursor.moveToNext()) {
-                val result = cursor.getString(columnIndex)
-                fileToReturn = File(result)
+            try {
+                if (cursor.moveToNext()) {
+                    val result = cursor.getString(columnIndex)
+                    fileToReturn = File(result)
+                }
+            } catch (exp: CursorIndexOutOfBoundsException) {
+                exp.printStackTrace()
+                fileToReturn = File(uri.path)
+            } catch (exp: NullPointerException) {
+                exp.printStackTrace()
+                fileToReturn = File(uri.path)
+            } finally {
+                cursor.close()
             }
-            cursor.close()
+
 //            } else {
 //                val documentId = DocumentsContract.getDocumentId(uri)
 //                val tables = arrayOf(MediaStore.Images.Media.DATA)

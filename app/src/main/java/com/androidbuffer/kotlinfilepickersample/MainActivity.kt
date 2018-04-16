@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
 
     private fun openVideo() {
         //opens a camera intent
-        KotRequest.Video(this, REQUEST_VIDEO).getVideoIntent()
+        KotRequest.Video(this, REQUEST_VIDEO).pick()
     }
 
     private fun openGallery(isMultiple: Boolean) {

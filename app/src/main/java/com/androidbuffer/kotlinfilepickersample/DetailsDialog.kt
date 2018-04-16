@@ -34,13 +34,10 @@ class DetailsDialog : DialogFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onStart() {
         super.onStart()
         dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        isCancelable = false
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -64,7 +61,7 @@ class DetailsDialog : DialogFragment() {
         val kotResult = arguments?.getParcelable<KotResult>(EXTRA_RESULT_OF_FILE)
         nameOfFile.text = kotResult?.name
         sizeOfFile.text = String.format(getString(R.string.size_of_file, kotResult?.size))
-        locationOfFile.text = String.format(getString(R.string.location_of_file, kotResult?.modified))
+        locationOfFile.text = String.format(getString(R.string.location_of_file, kotResult?.location))
         typeOfFile.text = String.format(getString(R.string.type_of_file, kotResult?.type))
         modifiedDateOfFile.text = String.format(getString(R.string.modified_date, kotResult?.modified))
     }

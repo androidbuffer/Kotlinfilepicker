@@ -6,6 +6,12 @@
     <string name="button_gallery">Gallery</string>
     <string name="button_video">Video</string>
     <string name="gallery_single">Gallery (Single)</string>
+    <string name="modified_date">Modified Date : %1$s</string>
+    <string name="type_of_file">Type : %1$s</string>
+    <string name="location_of_file">Location : %1$s</string>
+    <string name="size_of_file">Size : %1$s</string>
+    <string name="file_details">File Details</string>
+    <string name="button_close">Close</string>
 
     //recyclerview options
     <string-array name="arrayOptions">

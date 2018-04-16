@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvNameOfFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical|center_horizontal"
+        android:minHeight="150dp"
+        android:text="@string/file_details"
+        android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvSizeOfFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_text_view"
+        android:padding="16dp"
+        android:text="@string/size_of_file" />
+
+    <TextView
+        android:id="@+id/tvLocationOfFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_text_view"
+        android:padding="16dp"
+        android:text="@string/location_of_file" />
+
+    <TextView
+        android:id="@+id/tvTypeOfFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_text_view"
+        android:padding="16dp"
+        android:text="@string/type_of_file" />
+
+    <TextView
+        android:id="@+id/tvModiedDateOfFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_text_view"
+        android:padding="16dp"
+        android:text="@string/modified_date" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btClose"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/padding_large"
+        android:text="@string/button_close" />
+
+</LinearLayout>

@@ -71,9 +71,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
         if (REQUEST_CAMERA == requestCode && resultCode == Activity.RESULT_OK) {
 
             val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
-            val intent = Intent(this, GalleryActivity::class.java)
-            intent.putExtra(EXTRA_IMAGE_RESULT, result)
-            startActivity(intent)
+            startGalleryView(result!!)
 
         } else if (REQUEST_FILE == requestCode && resultCode == Activity.RESULT_OK) {
 
@@ -83,9 +81,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
         } else if (REQUEST_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
 
             val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
-            val intent = Intent(this, GalleryActivity::class.java)
-            intent.putExtra(EXTRA_IMAGE_RESULT, result)
-            startActivity(intent)
+            startGalleryView(result!!)
 
         } else if (REQUEST_VIDEO == requestCode && resultCode == Activity.RESULT_OK) {
 
@@ -94,14 +90,16 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
         }
     }
 
+    fun startGalleryView(kotResultList: ArrayList<KotResult>) {
+        val intent = Intent(this, GalleryActivity::class.java)
+        intent.putExtra(EXTRA_IMAGE_RESULT, kotResultList)
+        startActivity(intent)
+    }
+
     fun createDetailsFromResult(kotResult: KotResult) {
-        //this function creates the details from the result
-        val messageBuilder = StringBuilder(" Name = ${kotResult?.name}")
-                .append("\n size = ${kotResult?.size}")
-                .append("\n location = ${kotResult.location}")
-                .append("\n type = ${kotResult.type}")
-                .append("\n modied date = ${kotResult.modified}")
-        openDetailsDialog(messageBuilder.toString(), "File Details")
+        //this function creates the details dialog from the result
+        val detailsDialog = DetailsDialog.getInstance(kotResult)
+        detailsDialog.show(fragmentManager, "DetailsDialog")
     }
 
     override fun onItemClick(position: Int) {
@@ -114,14 +112,5 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
             4 -> openCamera()
             5 -> openVideo()
         }
-    }
-
-    fun openDetailsDialog(message: String, title: String) {
-        AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("Ok") { p0, p1 -> p0.dismiss() }
-                .create()
-                .show()
     }
 }

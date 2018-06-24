@@ -1,13 +1,12 @@
 package com.androidbuffer.kotlinfilepicker
 
-import android.content.ClipData
-import android.content.Context
-import android.content.CursorLoader
-import android.content.Intent
+import android.content.*
+import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.webkit.MimeTypeMap
@@ -16,9 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.text.TextUtils
 import java.util.regex.Pattern
-import android.provider.DocumentsContract
-import android.content.ContentUris
-import android.database.Cursor
 
 
 /**
@@ -231,6 +227,9 @@ class KotUtil {
             return ""
         }
 
+        /**
+         * returns the path from uri for API level 19 and up
+         */
         @SuppressWarnings("NewApi")
         private fun readPathFromUri(context: Context, uri: Uri): String? {
 
@@ -276,18 +275,30 @@ class KotUtil {
             return null
         }
 
+        /**
+         * checks if the given uri is of type external storage
+         */
         private fun isExternalStorageDocument(uri: Uri): Boolean {
             return "com.android.externalstorage.documents" == uri.authority
         }
 
+        /**
+         * checks if the given uri is of type downloads
+         */
         private fun isDownloadsDocument(uri: Uri): Boolean {
             return "com.android.providers.downloads.documents" == uri.authority
         }
 
+        /**
+         * checks if the given uri is of type media document
+         */
         private fun isMediaDocument(uri: Uri): Boolean {
             return "com.android.providers.media.documents" == uri.authority
         }
 
+        /**
+         * returns the column for specified uri
+         */
         private fun getDataColumn(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
             var cursor: Cursor? = null
             val column = MediaStore.Images.Media.DATA
@@ -309,6 +320,9 @@ class KotUtil {
             return null
         }
 
+        /**
+         * checks the type of uri
+         */
         private fun getContentUri(type: String): Uri? {
             when (type) {
                 "image" -> return MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -318,6 +332,9 @@ class KotUtil {
             return null
         }
 
+        /**
+         * checks if the uri is of type google photos
+         */
         private fun isGooglePhotosUri(uri: Uri): Boolean {
             return "com.google.android.apps.photos.content" == uri.authority
         }

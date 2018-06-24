@@ -48,6 +48,9 @@ captures/
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
+/gradle.properties
+.DS_Store
+/captures
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json

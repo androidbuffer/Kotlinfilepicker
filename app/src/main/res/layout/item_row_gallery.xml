@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/ivFullScreen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="centerInside" />
-
-</RelativeLayout>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ivThumbnail"
+    android:layout_width="@dimen/size_thumbnail"
+    android:layout_height="@dimen/size_thumbnail"
+    android:scaleType="centerCrop"
+    android:layout_margin="@dimen/margin_2dp"
+    ads:layout_constraintEnd_toEndOf="parent" />

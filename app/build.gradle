@@ -18,7 +18,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            manifestPlaceholders  = [admob:admobKey]
+            buildConfigField("string","AD_MOB_APP_ID","\"${admobAppId}\"")
+            resValue "string", "AD_MOB_DASHBOARD_AD_ID", "${admobDashboardAdId}"
+        }
+        debug {
+            buildConfigField("String","AD_MOB_APP_ID","\"${admobAppId}\"")
+            resValue "string", "AD_MOB_DASHBOARD_AD_ID", "${admobDashboardAdId}"
         }
     }
 }
@@ -33,5 +38,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    androidTestImplementation 'org.mockito:mockito-android:2.7.22'
+    testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
+    implementation 'com.google.android.gms:play-services-ads:15.0.0'
     implementation project(':kotlinfilepicker')
 }

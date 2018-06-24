@@ -3,13 +3,16 @@ package com.androidbuffer.kotlinfilepickersample
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.androidbuffer.kotlinfilepicker.KotConstants
 import com.androidbuffer.kotlinfilepicker.KotRequest
 import com.androidbuffer.kotlinfilepicker.KotResult
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
+
 
 class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
 
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
     private val REQUEST_VIDEO = 104
     private var adapter: PickerAdapter? = null
     lateinit var titleArray: Array<String>
+    lateinit var adBottom: AdView
 
     private val drawableArray = arrayOf(R.drawable.ic_action_gallery,
             R.drawable.ic_action_gallery,
@@ -33,9 +37,19 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //init the view elements
-        rvFilePickerMain = findViewById(R.id.rvFilePickerMain);
+        rvFilePickerMain = findViewById(R.id.rvFilePickerMain)
+        adBottom = findViewById(R.id.adViewBottom)
         titleArray = resources.getStringArray(R.array.arrayOptions)
         setRecyclerView()
+        setupAdView()
+    }
+
+    private fun setupAdView() {
+        //here setup the adview
+        MobileAds.initialize(this, BuildConfig.AD_MOB_APP_ID)
+        AdRequest.Builder().addTestDevice("CA633501FEEC97C2B1234735706515B2")
+        val adRequest = AdRequest.Builder().build()
+        adBottom.loadAd(adRequest)
     }
 
     private fun setRecyclerView() {

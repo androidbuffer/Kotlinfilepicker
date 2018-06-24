@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.text.TextUtils
 import java.util.regex.Pattern
+import android.provider.DocumentsContract
+import android.content.ContentUris
+import android.database.Cursor
 
 
 /**
@@ -141,38 +144,29 @@ class KotUtil {
         fun getFileDetails(context: Context, uri: Uri): File? {
             //get the details from uri
             var fileToReturn: File? = null
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            val tables = arrayOf(MediaStore.Images.Media.DATA)
-            val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
-            val cursor = cursorLoader.loadInBackground()
-            val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-            try {
-                if (cursor.moveToNext()) {
-                    val result = cursor.getString(columnIndex)
-                    fileToReturn = File(result)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                val tables = arrayOf(MediaStore.Images.Media.DATA)
+                val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
+                val cursor = cursorLoader.loadInBackground()
+                val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                try {
+                    if (cursor.moveToNext()) {
+                        val result = cursor.getString(columnIndex)
+                        fileToReturn = File(result)
+                    }
+                } catch (exp: CursorIndexOutOfBoundsException) {
+                    exp.printStackTrace()
+                    fileToReturn = File(uri.path)
+                } catch (exp: NullPointerException) {
+                    exp.printStackTrace()
+                    fileToReturn = File(uri.path)
+                } finally {
+                    cursor.close()
                 }
-            } catch (exp: CursorIndexOutOfBoundsException) {
-                exp.printStackTrace()
-                fileToReturn = File(uri.path)
-            } catch (exp: NullPointerException) {
-                exp.printStackTrace()
-                fileToReturn = File(uri.path)
-            } finally {
-                cursor.close()
-            }
 
-//            } else {
-//                val documentId = DocumentsContract.getDocumentId(uri)
-//                val tables = arrayOf(MediaStore.Images.Media.DATA)
-//                val selection = MediaStore.Images.Media._ID + "=?"
-//                val cursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, tables, selection, arrayOf(documentId), null)
-//                val columnIndex = cursor.getColumnIndex(tables[0])
-//                if (cursor.moveToNext()) {
-//                    val result = cursor.getString(columnIndex)
-//                    fileToReturn = File(result)
-//                }
-//                cursor.close()
-//            }
+            } else {
+                fileToReturn = File(readPathFromUri(context, uri))
+            }
             return fileToReturn
         }
 
@@ -183,7 +177,12 @@ class KotUtil {
         fun getMimeType(url: String): String {
             val extension = getFileExtensionFromUrl(url)
             if (!extension.isEmpty()) {
-                return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
+                val type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
+                if (type.isNullOrBlank()) {
+                    return "*/*"
+                } else {
+                    return type
+                }
             } else {
                 return "*/*"
             }
@@ -230,6 +229,97 @@ class KotUtil {
             }
 
             return ""
+        }
+
+        @SuppressWarnings("NewApi")
+        private fun readPathFromUri(context: Context, uri: Uri): String? {
+
+            // DocumentProvider
+            if (DocumentsContract.isDocumentUri(context, uri)) {
+                // ExternalStorageProvider
+                if (isExternalStorageDocument(uri)) {
+                    val docId = DocumentsContract.getDocumentId(uri)
+                    val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val type = split[0]
+
+                    if ("primary".equals(type, ignoreCase = true)) {
+                        return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                    }
+                } else if (isDownloadsDocument(uri)) {
+                    val id = DocumentsContract.getDocumentId(uri)
+                    val contentUri = ContentUris.withAppendedId(
+                            Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)!!)
+
+                    return getDataColumn(context, contentUri, null, null)
+                } else if (isMediaDocument(uri)) {
+                    val docId = DocumentsContract.getDocumentId(uri)
+                    val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val type = split[0]
+
+                    val contentUri = getContentUri(type)
+
+                    val selection = "_id=?"
+                    val selectionArgs = arrayOf(split[1])
+                    return getDataColumn(context, contentUri, selection, selectionArgs)
+                }// MediaProvider
+                // DownloadsProvider
+            } else if ("content".equals(uri.scheme, ignoreCase = true)) {
+                // Return the remote address
+                return if (isGooglePhotosUri(uri)) {
+                    uri.lastPathSegment
+                } else getDataColumn(context, uri, null, null)
+            } else if ("file".equals(uri.scheme, ignoreCase = true)) {
+                return uri.path
+            }// File
+            // MediaStore (and general)
+
+            return null
+        }
+
+        private fun isExternalStorageDocument(uri: Uri): Boolean {
+            return "com.android.externalstorage.documents" == uri.authority
+        }
+
+        private fun isDownloadsDocument(uri: Uri): Boolean {
+            return "com.android.providers.downloads.documents" == uri.authority
+        }
+
+        private fun isMediaDocument(uri: Uri): Boolean {
+            return "com.android.providers.media.documents" == uri.authority
+        }
+
+        private fun getDataColumn(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
+            var cursor: Cursor? = null
+            val column = MediaStore.Images.Media.DATA
+            val projection = arrayOf(column)
+
+            try {
+                cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, null)
+                if (cursor != null && cursor!!.moveToFirst()) {
+                    val column_index = cursor!!.getColumnIndexOrThrow(column)
+                    return cursor!!.getString(column_index)
+                }
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            } finally {
+                if (cursor != null) {
+                    cursor!!.close()
+                }
+            }
+            return null
+        }
+
+        private fun getContentUri(type: String): Uri? {
+            when (type) {
+                "image" -> return MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                "video" -> return MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                "audio" -> return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            }
+            return null
+        }
+
+        private fun isGooglePhotosUri(uri: Uri): Boolean {
+            return "com.google.android.apps.photos.content" == uri.authority
         }
 
     }

@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
 
     private fun openFile(isMultiple: Boolean) {
         //opens a file intent
-        KotRequest.File(this, REQUEST_FILE).isMultiple(isMultiple).pick()
+        KotRequest.File(this, REQUEST_FILE).isMultiple(isMultiple).setMimeType(KotConstants.FILE_TYPE_FILE_ALL).pick()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

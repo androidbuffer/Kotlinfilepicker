@@ -89,6 +89,17 @@ public class KotRequest {
         }
 
         /**
+         * set the mime type of the file selection,
+         * please note by default value is @see KotConstants FILE_TYPE_VIDEO_ALL
+         * setting mime type will override the default one
+         * @param mimeType
+         */
+        fun setMimeType(mimeType: String): Video {
+            intent.putExtra(KotConstants.EXTRA_FILE_MIME_TYPE, mimeType)
+            return this
+        }
+
+        /**
          * if set and initialized through constructor then we can get intent back,
          * use pick() instead if intent is not required
          * @return Intent
@@ -154,6 +165,17 @@ public class KotRequest {
          */
         fun isMultiple(isMultipleEnabled: Boolean): Gallery {
             putMultiple(isMultipleEnabled)
+            return this
+        }
+
+        /**
+         * set the mime type of the file selection,
+         * please note by default value is @see KotConstants FILE_TYPE_IMAGE_ALL
+         * setting mime type will override the default one
+         * @param mimeType
+         */
+        fun setMimeType(mimeType: String): Gallery {
+            intent.putExtra(KotConstants.EXTRA_FILE_MIME_TYPE, mimeType)
             return this
         }
 
@@ -226,11 +248,22 @@ public class KotRequest {
         }
 
         /**
+         * set the mime type of the file selection,
+         * please note by default value is @see KotConstants FILE_TYPE_FILE_ALL
+         * setting mime type will override the default one
+         * @param mimeType
+         */
+        fun setMimeType(mimeType: String): File {
+            intent.putExtra(KotConstants.EXTRA_FILE_MIME_TYPE, mimeType)
+            return this
+        }
+
+        /**
          * if set and initialized through constructor then we can get intent back
          * use pick() instead if intent is not required
          * @return @see Intent
          */
-        fun getGalleryIntent(): Intent {
+        fun getFileIntent(): Intent {
             return intent
         }
 

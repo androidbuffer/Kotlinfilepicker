@@ -5,11 +5,12 @@ package com.androidbuffer.kotlinfilepicker
  */
 
 
-public class KotConstants {
+class KotConstants {
 
     companion object {
         //extra intent constants
         public const val EXTRA_MULTIPLE_ENABLED = "extraMultipleEnabled"
+        public const val EXTRA_FILE_MIME_TYPE = "extraFileMimeType"
         public const val EXTRA_FILE_SELECTION = "extraFileSelection"
         public const val EXTRA_FILE_RESULTS = "extraFileResults"
 

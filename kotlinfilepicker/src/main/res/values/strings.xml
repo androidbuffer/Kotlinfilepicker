@@ -3,4 +3,7 @@
     <string name="exception_msg">Kotlin file picker is not initialized with proper arguments</string>
     <string name="exception_msg_illegal_">File selection not supported</string>
     <string name="exception_msg_no_activity">No Activity found to handle Intent</string>
+    <string name="dialog_finish_button">not now</string>
+    <string name="dialog_settings_button">SETTINGS</string>
+    <string name="dialog_permissions_message">Allow Application to access to  your device\'s photos, media and files. Tap settings > Permissions, and turn storage  on.</string>
 </resources>

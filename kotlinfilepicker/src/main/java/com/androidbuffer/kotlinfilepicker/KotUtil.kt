@@ -15,6 +15,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.text.TextUtils
 import java.util.regex.Pattern
+import android.content.DialogInterface
+import android.support.v4.content.ContextCompat.startActivity
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import android.content.Intent
+import android.app.Activity
+import android.provider.Settings
+import android.support.v7.app.AlertDialog
 
 
 /**
@@ -75,7 +82,13 @@ class KotUtil {
          * multiple select works for only API level 18 and above
          */
         fun getGalleryIntent(mimeType: String, isMultiple: Boolean): Intent {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent: Intent
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            } else {
+                intent = Intent(Intent.ACTION_GET_CONTENT)
+            }
             intent.type = mimeType
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
@@ -91,12 +104,17 @@ class KotUtil {
          * returns a intent for file
          */
         fun getFileIntent(mimeType: String, isMultiple: Boolean): Intent {
-            val intent = Intent()
+            val intent: Intent
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            } else {
+                intent = Intent(Intent.ACTION_GET_CONTENT)
+            }
             intent.type = mimeType
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
             }
-            intent.action = Intent.ACTION_GET_CONTENT
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             return intent
@@ -118,7 +136,7 @@ class KotUtil {
 
         private fun createFileName(): String {
             //this returns a string file name
-            return SimpleDateFormat("ddMMyyyy_HHmmss", Locale.getDefault()).format(Date())
+            return SimpleDateFormat("ddMMyyyy_HHmmssSS", Locale.getDefault()).format(Date())
         }
 
         private fun getUriFromFile(context: Context, file: File): Uri {
@@ -140,28 +158,31 @@ class KotUtil {
         fun getFileDetails(context: Context, uri: Uri): File? {
             //get the details from uri
             var fileToReturn: File? = null
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                val tables = arrayOf(MediaStore.Images.Media.DATA)
-                val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
-                val cursor = cursorLoader.loadInBackground()
-                val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                try {
+            try {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    val tables = arrayOf(MediaStore.Images.Media.DATA)
+                    val cursorLoader = CursorLoader(context, uri, tables, null, null, null)
+                    val cursor = cursorLoader.loadInBackground()
+                    val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+
                     if (cursor.moveToNext()) {
                         val result = cursor.getString(columnIndex)
                         fileToReturn = File(result)
                     }
-                } catch (exp: CursorIndexOutOfBoundsException) {
-                    exp.printStackTrace()
-                    fileToReturn = File(uri.path)
-                } catch (exp: NullPointerException) {
-                    exp.printStackTrace()
-                    fileToReturn = File(uri.path)
-                } finally {
                     cursor.close()
-                }
 
-            } else {
-                fileToReturn = File(readPathFromUri(context, uri))
+                } else {
+                    fileToReturn = File(readPathFromUri(context, uri))
+                }
+            } catch (exp: CursorIndexOutOfBoundsException) {
+                exp.printStackTrace()
+                fileToReturn = File(uri.path)
+            } catch (exp: NullPointerException) {
+                exp.printStackTrace()
+                fileToReturn = File(uri.path)
+            } catch (exp: NumberFormatException) {
+                exp.printStackTrace()
+                fileToReturn = File(uri.path)
             }
             return fileToReturn
         }
@@ -269,8 +290,7 @@ class KotUtil {
                 } else getDataColumn(context, uri, null, null)
             } else if ("file".equals(uri.scheme, ignoreCase = true)) {
                 return uri.path
-            }// File
-            // MediaStore (and general)
+            }
 
             return null
         }
@@ -337,6 +357,32 @@ class KotUtil {
          */
         private fun isGooglePhotosUri(uri: Uri): Boolean {
             return "com.google.android.apps.photos.content" == uri.authority
+        }
+
+        /**
+         * opens the settings activity for app
+         * @param activity
+         * @param
+         */
+        fun openSettingsDialog(activity: Activity, wantToFinishOnOk: Boolean) {
+            val alertBuilder = AlertDialog.Builder(activity)
+
+            alertBuilder.setPositiveButton(R.string.dialog_settings_button, { dialogInterface, i ->
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                val uri = Uri.fromParts("package", activity.packageName, null)
+                intent.data = uri
+                activity.startActivity(intent)
+            })
+            alertBuilder.setNegativeButton(R.string.dialog_finish_button, { dialogInterface, i ->
+                dialogInterface.dismiss()
+                if (wantToFinishOnOk) {
+                    activity.finish()
+                }
+            })
+            alertBuilder.setMessage(R.string.dialog_permissions_message)
+            alertBuilder.setCancelable(false)
+            alertBuilder.create().show()
         }
 
     }

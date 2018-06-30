@@ -30,12 +30,9 @@ class GalleryActivity : AppCompatActivity(), ThumbnailAdapter.OnThumbnailListene
         setContentView(R.layout.activity_gallery)
         listOfImages = intent.getParcelableArrayListExtra<KotResult>(EXTRA_IMAGE_RESULT)
 
-        //adapter for thumbnail
-        adapter = ThumbnailAdapter(listOfImages, this)
-        rvThumbnailsImages = findViewById(R.id.rvThumbnailsImages)
-        rvThumbnailsImages.layoutManager = LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL, false)
-        rvThumbnailsImages.adapter = adapter
+        if (listOfImages.size > 1) {
+            setupRecyclerView()
+        }
 
         //image view
         imageViewFullScreen = findViewById(R.id.ivFullScreenImage)
@@ -43,10 +40,23 @@ class GalleryActivity : AppCompatActivity(), ThumbnailAdapter.OnThumbnailListene
         //by default image
         imageViewFullScreen.setImageURI(listOfImages.get(0).uri)
 
-        //adview
+        setupAdView()
+    }
+
+    fun setupAdView() {
+        //setup the adview
         adViewBottom = findViewById(R.id.adViewBottom)
         val adRequest = AdRequest.Builder().build()
         adViewBottom.loadAd(adRequest)
+    }
+
+    private fun setupRecyclerView() {
+        //adapter for thumbnail
+        adapter = ThumbnailAdapter(listOfImages, this)
+        rvThumbnailsImages = findViewById(R.id.rvThumbnailsImages)
+        rvThumbnailsImages.layoutManager = LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false)
+        rvThumbnailsImages.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -66,6 +76,6 @@ class GalleryActivity : AppCompatActivity(), ThumbnailAdapter.OnThumbnailListene
      */
     override fun onThumbnailClick(position: Int) {
         imageViewFullScreen.setImageURI(listOfImages.get(position).uri)
-        Log.d("TAG",listOfImages.get(position).uri.toString())
+        Log.d("TAG", listOfImages.get(position).uri.toString())
     }
 }

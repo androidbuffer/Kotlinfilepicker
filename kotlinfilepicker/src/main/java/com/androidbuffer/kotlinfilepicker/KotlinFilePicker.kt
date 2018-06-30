@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
 
 
@@ -27,6 +28,7 @@ public class KotlinFilePicker : AppCompatActivity() {
     private val REQUEST_MEDIA_VIDEO = 104
     private val PERMISSION_REQUEST_STORAGE = 100
     private var intentPick: Intent? = null
+    private var isPermissionDenied = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,13 @@ public class KotlinFilePicker : AppCompatActivity() {
             }
         } else {
             handleIntent(intent)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (isPermissionDenied) {
+            KotUtil.openSettingsDialog(KotlinFilePicker@ this, true)
         }
     }
 
@@ -69,12 +78,22 @@ public class KotlinFilePicker : AppCompatActivity() {
             }
             KotConstants.SELECTION_TYPE_GALLERY -> {
                 //gallery intent
-                val galleryIntent = KotUtil.getGalleryIntent(KotConstants.FILE_TYPE_IMAGE_ALL, isMultipleEnabled)
+                val mimeType = if (intent.hasExtra(KotConstants.EXTRA_FILE_MIME_TYPE)) {
+                    intent.getStringExtra(KotConstants.EXTRA_FILE_MIME_TYPE)
+                } else {
+                    KotConstants.FILE_TYPE_IMAGE_ALL
+                }
+                val galleryIntent = KotUtil.getGalleryIntent(mimeType, isMultipleEnabled)
                 startActivityForResult(galleryIntent, REQUEST_MEDIA_GALLERY)
             }
             KotConstants.SELECTION_TYPE_FILE -> {
                 //file intent
-                val fileIntent = KotUtil.getFileIntent(KotConstants.FILE_TYPE_FILE_ALL, isMultipleEnabled)
+                val mimeType = if (intent.hasExtra(KotConstants.EXTRA_FILE_MIME_TYPE)) {
+                    intent.getStringExtra(KotConstants.EXTRA_FILE_MIME_TYPE)
+                } else {
+                    KotConstants.FILE_TYPE_FILE_ALL
+                }
+                val fileIntent = KotUtil.getFileIntent(mimeType, isMultipleEnabled)
                 startActivityForResult(fileIntent, REQUEST_MEDIA_FILE)
             }
             KotConstants.SELECTION_TYPE_VIDEO -> {
@@ -102,7 +121,8 @@ public class KotlinFilePicker : AppCompatActivity() {
         if (PERMISSION_REQUEST_STORAGE == requestCode) {
             for (permission in grantResults) {
                 if (permission == PackageManager.PERMISSION_DENIED) {
-                    throwException("Permission not granted for storage read and write ${permissions}")
+                    isPermissionDenied = true
+                    KotUtil.openSettingsDialog(KotlinFilePicker@ this, true)
                     return
                 }
             }
@@ -112,7 +132,12 @@ public class KotlinFilePicker : AppCompatActivity() {
 
     private fun throwException(msg: String) {
         //throws a exception in case of exception
-        throw IllegalArgumentException(msg)
+        try {
+            finish()
+            throw IllegalArgumentException(msg)
+        } catch (exp: IllegalArgumentException) {
+            exp.printStackTrace()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -159,6 +184,7 @@ public class KotlinFilePicker : AppCompatActivity() {
             val fileModified = KotUtil.getDateModified(file.lastModified())
             val kotResult = KotResult(item, fileName, fileSize, fileLocation, fileMimeType, fileModified)
             result.add(kotResult)
+            Log.d(TAG, fileLocation)
         }
         return result
     }

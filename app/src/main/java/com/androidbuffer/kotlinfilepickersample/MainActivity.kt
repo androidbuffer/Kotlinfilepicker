@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
     private fun setupAdView() {
         //here setup the adview
         MobileAds.initialize(this, BuildConfig.AD_MOB_APP_ID)
-        AdRequest.Builder().addTestDevice("CA633501FEEC97C2B1234735706515B2")
+        AdRequest.Builder().addTestDevice("D50CED5C7D63D1D9B4DE1A5251B16354")
         val adRequest = AdRequest.Builder().build()
         adBottom.loadAd(adRequest)
     }

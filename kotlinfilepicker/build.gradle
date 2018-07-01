@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 26
@@ -18,6 +20,8 @@ android {
         }
     }
 
+    kapt { generateStubs = true }
+
 }
 
 dependencies {
@@ -27,8 +31,54 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
+
 repositories {
     mavenCentral()
 }
+
+def libraryGroupId = 'com.androidbuffer'
+def libraryArtifactId = 'kotlinfilepicker'
+def libraryVersion = '0.0.1'
+
+publishing{
+    publications{
+        aar(MavenPublication){
+            groupId libraryGroupId
+            version libraryVersion
+            artifactId libraryArtifactId
+            artifact("$buildDir/outputs/aar/$artifactId-release.aar")
+        }
+    }
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'gradle-dev-local'
+            username = "${artifactory_username}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+
+            properties = ['qa.level': 'basic', 'q.os': 'android', 'dev.team': 'core']
+            publishPom = true
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradle-dev'
+            username = "${artifactory_username}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+}
+

@@ -44,4 +44,3 @@ captures/
 .externalNativeBuild
 /gradle.properties
 .idea/
-gradle/

@@ -42,13 +42,6 @@ class InstrumentedTest {
     }
 
     @Test
-    fun isFileDetailsCorrect() {
-        val uri = Uri.parse("content://com.android.providers.media.documents/document/image%3A929")
-        val fileDetails = KotUtil.getFileDetails(appContext, uri)
-        assertNotNull(fileDetails?.name)
-    }
-
-    @Test
     fun fileIntentNotNull() {
         val mimeType = "image/*"
         val intent = KotUtil.getFileIntent(mimeType, true)

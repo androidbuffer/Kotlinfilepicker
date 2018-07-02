@@ -51,5 +51,5 @@ dependencies {
     androidTestImplementation 'org.mockito:mockito-android:2.7.22'
     testImplementation 'com.nhaarman:mockito-kotlin:1.5.0'
     implementation 'com.google.android.gms:play-services-ads:15.0.0'
-    implementation 'com.androidbuffer:kotlinfilepicker:0.0.1'
+    implementation project(':kotlinfilepicker')
 }

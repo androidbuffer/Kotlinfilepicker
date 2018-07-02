@@ -65,6 +65,9 @@ KotRequest.File(this, REQUEST_FILE)
                 .setMimeType(KotConstants.FILE_TYPE_FILE_ALL)
                 .pick()
 ```
+## Contributing / Issues
+we would be thankful for contrubuting to this project or if you find some bug or suggestions we welcome you also.
+
 
 
 ## Authors

@@ -66,7 +66,7 @@ KotRequest.File(this, REQUEST_FILE)
                 .pick()
 ```
 ## Contributing / Issues
-we would be thankful for contrubuting to this project or if you find some bug or suggestions we welcome you also.
+we would be thankful for contributing to this project or if you find some bug or suggestions we welcome you also.
 
 
 

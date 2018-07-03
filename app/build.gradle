@@ -11,12 +11,12 @@ android {
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField("String", "AD_MOB_APP_ID", "\"${admobAppId}\"")
             resValue "string", "AD_MOB_DASHBOARD_AD_ID", "${admobDashboardAdId}"

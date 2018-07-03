@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kotlin FilePicker Sample</string>
+    <string name="app_name">Kotlin File Picker</string>
     <string name="choose_file">Pick any below option to choose file</string>
     <string name="button_camera">Camera</string>
     <string name="button_file">File</string>

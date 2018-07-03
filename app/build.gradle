@@ -5,14 +5,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias key_alias
-            keyPassword key_password
-            storeFile file(store_file)
-            storePassword store_password
-        }
-    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.androidbuffer.kotlinfilepickersample"
@@ -34,7 +26,6 @@ android {
             resValue "string", "AD_MOB_DASHBOARD_AD_ID", "${admobDashboardAdId}"
         }
     }
-    kapt { generateStubs = true }
 }
 
 dependencies {

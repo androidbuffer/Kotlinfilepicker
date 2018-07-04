@@ -1,4 +1,5 @@
 # Kotlinfilepicker [![](https://jitpack.io/v/androidbuffer/kotlinfilepicker.svg)](https://jitpack.io/#androidbuffer/kotlinfilepicker)
+<a href='https://play.google.com/store/apps/details?id=com.androidbuffer.kotlinfilepickersample&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_gb/badges/images/generic/en_badge_web_generic.png' height=46 width=120 /></a>
 
 An Android file picker written all in [Kotlin](https://kotlinlang.org/docs/reference/). KotlinFilePicker can be used to pick media files from Gallery and storage device. 
 
@@ -67,8 +68,6 @@ KotRequest.File(this, REQUEST_FILE)
 ```
 ## Contributing / Issues
 we would be thankful for contributing to this project or if you find some bug or suggestions we welcome you also.
-
-
 
 ## Authors
 

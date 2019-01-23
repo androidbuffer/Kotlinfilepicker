@@ -22,7 +22,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    implementation 'com.github.androidbuffer:kotlinfilepicker:v0.0.1-alpha'
+    implementation 'com.github.androidbuffer:kotlinfilepicker:v0.0.2-alpha'
 }
 ```
 <b>Maven</b>

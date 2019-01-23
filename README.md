@@ -66,6 +66,35 @@ KotRequest.File(this, REQUEST_FILE)
                 .setMimeType(KotConstants.FILE_TYPE_FILE_ALL)
                 .pick()
 ```
+* Get back results like this.
+```
+ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (REQUEST_CAMERA == requestCode && resultCode == Activity.RESULT_OK) {
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
+            startGalleryView(result!!)
+
+        } else if (REQUEST_FILE == requestCode && resultCode == Activity.RESULT_OK) {
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
+            createDetailsFromResult(result!!.get(0))
+
+        } else if (REQUEST_GALLERY == requestCode && resultCode == Activity.RESULT_OK) {
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
+            startGalleryView(result!!)
+
+        } else if (REQUEST_VIDEO == requestCode && resultCode == Activity.RESULT_OK) {
+
+            val result = data?.getParcelableArrayListExtra<KotResult>(KotConstants.EXTRA_FILE_RESULTS)
+            createDetailsFromResult(result!!.get(0))
+        }
+    }
+
+```
+
 ## Contributing / Issues
 we would be thankful for contributing to this project or if you find some bug or suggestions we welcome you also.
 

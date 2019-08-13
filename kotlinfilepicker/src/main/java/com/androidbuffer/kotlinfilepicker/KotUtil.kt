@@ -1,5 +1,6 @@
 package com.androidbuffer.kotlinfilepicker
 
+import android.app.Activity
 import android.content.*
 import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
@@ -8,20 +9,15 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.Settings
 import android.support.v4.content.FileProvider
+import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import android.text.TextUtils
 import java.util.regex.Pattern
-import android.content.DialogInterface
-import android.support.v4.content.ContextCompat.startActivity
-import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-import android.content.Intent
-import android.app.Activity
-import android.provider.Settings
-import android.support.v7.app.AlertDialog
 
 
 /**
@@ -31,7 +27,7 @@ class KotUtil {
 
     companion object {
 
-        private val authority = BuildConfig.APPLICATION_ID + ".fileprovider"
+        private fun authority(context: Context) = context.packageName + ".fileprovider"
 
         /**
          * @return {@link Intent}
@@ -141,7 +137,7 @@ class KotUtil {
 
         private fun getUriFromFile(context: Context, file: File): Uri {
             //returns uri from file object
-            return FileProvider.getUriForFile(context, authority, file)
+            return FileProvider.getUriForFile(context, authority(context), file)
         }
 
         private fun grantUriPermission(context: Context, intent: Intent, uri: Uri) {

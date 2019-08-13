@@ -10,8 +10,8 @@ android {
         applicationId "com.androidbuffer.kotlinfilepickersample"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 2
-        versionName "0.0.2"
+        versionCode 3
+        versionName "0.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -24,6 +24,7 @@ android {
         debug {
             buildConfigField("String", "AD_MOB_APP_ID", "\"${admobAppId}\"")
             resValue "string", "AD_MOB_DASHBOARD_AD_ID", "${admobDashboardAdId}"
+            applicationIdSuffix ".debug"
         }
     }
 }

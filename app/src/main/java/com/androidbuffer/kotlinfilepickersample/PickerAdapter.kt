@@ -1,11 +1,11 @@
 package com.androidbuffer.kotlinfilepickersample
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by AndroidBuffer on 26/1/18.
@@ -24,7 +24,7 @@ class PickerAdapter(titleArray: Array<String>,
         holder.ivTitleIcon.setImageResource(drawableList[position])
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.item_row_layout, parent, false))
     }
 

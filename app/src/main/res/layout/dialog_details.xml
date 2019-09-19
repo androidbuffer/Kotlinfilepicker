@@ -51,7 +51,7 @@
         android:padding="16dp"
         android:text="@string/modified_date" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btClose"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"

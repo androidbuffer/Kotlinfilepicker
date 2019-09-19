@@ -2,7 +2,7 @@ package com.androidbuffer.kotlinfilepickersample
 
 import android.app.DialogFragment
 import android.os.Bundle
-import android.support.v7.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatButton
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

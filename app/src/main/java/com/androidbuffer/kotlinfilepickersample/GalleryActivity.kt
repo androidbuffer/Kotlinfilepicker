@@ -1,9 +1,9 @@
 package com.androidbuffer.kotlinfilepickersample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,7 +19,7 @@ import com.google.android.gms.ads.AdView
 class GalleryActivity : AppCompatActivity(), ThumbnailAdapter.OnThumbnailListener {
 
     private val EXTRA_IMAGE_RESULT = "EXTRA_IMAGE_RESULT"
-    lateinit var rvThumbnailsImages: RecyclerView
+    lateinit var rvThumbnailsImages: androidx.recyclerview.widget.RecyclerView
     lateinit var listOfImages: ArrayList<KotResult>
     lateinit var adapter: ThumbnailAdapter
     lateinit var imageViewFullScreen: ImageView
@@ -54,8 +54,8 @@ class GalleryActivity : AppCompatActivity(), ThumbnailAdapter.OnThumbnailListene
         //adapter for thumbnail
         adapter = ThumbnailAdapter(listOfImages, this)
         rvThumbnailsImages = findViewById(R.id.rvThumbnailsImages)
-        rvThumbnailsImages.layoutManager = LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL, false)
+        rvThumbnailsImages.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this,
+                androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
         rvThumbnailsImages.adapter = adapter
     }
 

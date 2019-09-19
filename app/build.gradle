@@ -24,6 +24,7 @@ android {
         debug {
             buildConfigField("String", "AD_MOB_APP_ID", "\"${admobAppId}\"")
             resValue "string", "AD_MOB_DASHBOARD_AD_ID", "${admobDashboardAdId}"
+            applicationIdSuffix ".debug"
         }
     }
 }

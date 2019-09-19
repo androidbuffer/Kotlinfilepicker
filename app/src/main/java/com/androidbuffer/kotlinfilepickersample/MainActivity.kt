@@ -3,9 +3,9 @@ package com.androidbuffer.kotlinfilepickersample
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.androidbuffer.kotlinfilepicker.KotConstants
 import com.androidbuffer.kotlinfilepicker.KotRequest
 import com.androidbuffer.kotlinfilepicker.KotResult
@@ -17,7 +17,7 @@ import com.google.android.gms.ads.MobileAds
 class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
 
     private val EXTRA_IMAGE_RESULT = "EXTRA_IMAGE_RESULT"
-    lateinit var rvFilePickerMain: RecyclerView
+    lateinit var rvFilePickerMain: androidx.recyclerview.widget.RecyclerView
     private val REQUEST_CAMERA = 101
     private val REQUEST_GALLERY = 102
     private val REQUEST_FILE = 103
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), PickerAdapter.OnClickItemListener {
     private fun setRecyclerView() {
         //here set the recycler view
         adapter = PickerAdapter(titleArray, drawableArray, this)
-        rvFilePickerMain.layoutManager = LinearLayoutManager(this)
+        rvFilePickerMain.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         rvFilePickerMain.adapter = adapter
     }
 
